@@ -1,0 +1,6 @@
+job:
+  name: model
+  tags: {"env": "dev"}
+  default_cluster_node_type_id: Standard_DS3_v2
+  git_url: https://github.com/lexara-prime-ai/DATABRICKS_CDD.git
+  git_branch: "feature/model"
