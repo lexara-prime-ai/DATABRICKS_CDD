@@ -1,3 +1,7 @@
+from databricks.sdk import WorkspaceClient
+
+w = WorkspaceClient()
+
 def config_parser(config_file) -> dict:
     try:
         with open(config_file) as f:
@@ -45,5 +49,33 @@ task_names = ",".join(task_list)
 
 job_tasks = create_tasks(tasks)
 
+import time
+
 # Create job with tasks and configuration from the [config_file].
-created_job = ""
+created_job = w.jobs.create(
+    name=f"{job['name']}-{time.time_ns()}",
+    tags=job["tags"],
+    git_source=jobs.GitSource(
+        git_url=job["git_url"],
+        git_provider=jobs.GitProvider.gitHub,
+        git_branch=job["git_branch"],
+    ),
+    job_clusters=[
+        jobs.JobCluster(
+            job_cluster_key="default_cluster",
+            new_cluster=compute.ClusterSpec(
+                spark_version=w.clusters.select_spark_version(long_term_support=True),
+                node_type_id="Standard_DS3_v2",
+                num_workers=1,
+            ),
+        )
+    ],
+    tasks=job_tasks,
+)
+
+# Run the newly created job.
+run_by_id = w.jobs.run_now(job_id=created_job.job_id).result()
+
+# Cleanup -> Delete the job on completion.
+w.jobs.delete(job_id=created_job.job_id)
+
