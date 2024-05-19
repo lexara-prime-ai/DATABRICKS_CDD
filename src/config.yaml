@@ -9,3 +9,9 @@ job:
   tasks:
     - task_key: feature
       description: model/feature
+      python_file: feature.py
+      parameters: ["feature"]
+    - task_key: model_scoring
+      description: model_scoring.py
+      parameters: ["scoring"]
+      depends_on: ["feature"]
