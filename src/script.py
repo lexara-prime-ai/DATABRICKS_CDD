@@ -43,3 +43,7 @@ task_list = [task["task_key"] for task in tasks]
 task_names = ",".join(task_list)
 
 
+job_tasks = create_tasks(tasks)
+
+# Create job with tasks and configuration from the [config_file].
+created_job = 
